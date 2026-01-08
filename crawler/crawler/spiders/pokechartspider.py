@@ -72,5 +72,5 @@ class PokechartspiderSpider(scrapy.Spider):
             response.xpath('//td[@id="manual_only_price"]/span[1]/text()').get().strip()
         )
         item["timestamp"] = int(time.time())
-        
+
         yield item

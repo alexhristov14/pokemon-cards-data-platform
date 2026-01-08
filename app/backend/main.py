@@ -1,7 +1,8 @@
+import os
+
+from elasticsearch import Elasticsearch
 from fastapi import FastAPI
 from sqlalchemy import create_engine, except_, text
-from elasticsearch import Elasticsearch
-import os
 
 app = FastAPI()
 
@@ -10,6 +11,7 @@ ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL")
 
 engine = create_engine(DATABASE_URL)
 es = Elasticsearch(ELASTICSEARCH_URL)
+
 
 @app.get("/")
 def health_check():
@@ -26,6 +28,7 @@ def check_postgres():
         return "ok"
     except Exception as e:
         return str(e)
+
 
 def check_elasticsearch():
     try:
