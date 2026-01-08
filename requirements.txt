@@ -1,4 +1,1 @@
-scrapy
-black
-isort
-pre-commit
+pandas
