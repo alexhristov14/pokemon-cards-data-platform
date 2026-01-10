@@ -1,10 +1,10 @@
 FROM python:3.11-slim
 
-WORKDIR /app/app
+WORKDIR /app
 
 COPY requirements.txt .
 
-ENV PYTHONPATH="/app/app:$PYTHONPATH"
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
 RUN pip install --no-cache-dir -r requirements.txt
 

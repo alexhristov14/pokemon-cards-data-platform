@@ -1,5 +1,4 @@
-import models
-
+from . import models
 from .db import Base, engine
 
 
