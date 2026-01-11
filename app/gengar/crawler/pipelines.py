@@ -54,29 +54,40 @@ class PostgresPipeline:
 
 
 class CassandraPipeline:
-
     def open_spider(self, spider):
         HOSTS = ["cassandra"]
         KEYSPACE = "pokemon"
 
         try:
-            self.cluster = Cluster(contact_points=HOSTS, port=9042)
-
+            self.cluster = Cluster(HOSTS, port=9042)
             self.session = self.cluster.connect(keyspace=KEYSPACE)
+
+            self.insert_stmt = self.session.prepare(
+                """
+                INSERT INTO card_price_history (
+                    card_id, bucket_date, ts, price, source
+                )
+                VALUES (?, ?, ?, ?, ?)
+            """
+            )
 
             print("Successfully connected to Cassandra")
         except Exception as e:
             print(f"Cassandra connection error: {e}")
 
     def close_spider(self, spider):
-        self.cluster.shutdown()
+        if hasattr(self, "cluster"):
+            self.cluster.shutdown()
 
     def process_item(self, item, spider):
-        self.insert_stmt = session.prepare(
-            """
-            INSERT INTO card_price_history (
-                card_id, bucket_date, ts, price, source
-            )
-            VALUES (?, ?, ?, ?, ?)
-        """
+        ts = item.get("timestamp")
+
+        if isinstance(ts, str):
+            ts = datetime.fromisoformat(ts)
+
+        bucket_date = ts.date()
+
+        self.session.execute(
+            self.insert_stmt,
+            (item["pokemon"], bucket_date, ts, float(item["raw"]), "ebay"),
         )

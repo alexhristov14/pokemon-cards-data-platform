@@ -56,6 +56,7 @@ DOWNLOAD_DELAY = 1
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "crawler.pipelines.PostgresPipeline": 300,
+    "crawler.pipelines.CassandraPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
