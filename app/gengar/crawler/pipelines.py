@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import date, datetime
 
 from cassandra.auth import PlainTextAuthenticator
@@ -66,9 +67,9 @@ class CassandraPipeline:
         self.insert_stmt = self.session.prepare(
             """
             INSERT INTO card_price_history (
-                card_id, date, price, source
+                card_id, scrape_id, grade, date, price, source
             )
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
             """
         )
 
@@ -84,9 +85,14 @@ class CassandraPipeline:
         if isinstance(ts, str):
             ts = datetime.fromisoformat(ts)
 
-        # bucket_date = ts.date()
+        all_grades = ["raw", "grade_7", "grade_8", "grade_9", "grade_9_5", "grade_10"]
 
-        self.session.execute(
-            self.insert_stmt,
-            (item["pokemon"], ts, parse_price(item.get("raw")), "ebay"),
-        )
+        for grade in all_grades:
+            price = parse_price(item.get(grade))
+            scrape_id = uuid.uuid1()
+
+            if price is not None:
+                self.session.execute(
+                    self.insert_stmt,
+                    (item["pokemon"], scrape_id, grade, ts, price, "ebay"),
+                )

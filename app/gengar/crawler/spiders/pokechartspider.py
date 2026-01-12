@@ -53,30 +53,25 @@ class PokechartspiderSpider(scrapy.Spider):
         item = PokemonCard()
 
         item["pokemon"] = response.url.split("/")[-1]
-        item["raw"] = (
-            response.xpath('//td[@id="used_price"]/span[1]/text()').get().strip()
-        )
-        item["grade_7"] = (
-            response.xpath('//td[@id="complete_price"]/span[1]/text()')
-            .get()
-            .strip()[1:]
-        )
-        item["grade_8"] = (
-            response.xpath('//td[@id="new_price"]/span[1]/text()').get().strip()[1:]
-        )
-        item["grade_9"] = (
-            response.xpath('//td[@id="graded_price"]/span[1]/text()').get().strip()[1:]
-        )
-        item["grade_9_5"] = (
-            response.xpath('//td[@id="box_only_price"]/span[1]/text()')
-            .get()
-            .strip()[1:]
-        )
-        item["grade_10"] = (
-            response.xpath('//td[@id="manual_only_price"]/span[1]/text()')
-            .get()
-            .strip()[1:]
-        )
+
+        raw = response.xpath('//td[@id="used_price"]/span[1]/text()').get()
+        item["raw"] = raw.strip() if raw else None
+
+        grade_7 = response.xpath('//td[@id="complete_price"]/span[1]/text()').get()
+        item["grade_7"] = grade_7.strip()[1:] if grade_7 else None
+
+        grade_8 = response.xpath('//td[@id="new_price"]/span[1]/text()').get()
+        item["grade_8"] = grade_8.strip()[1:] if grade_8 else None
+
+        grade_9 = response.xpath('//td[@id="graded_price"]/span[1]/text()').get()
+        item["grade_9"] = grade_9.strip()[1:] if grade_9 else None
+
+        grade_9_5 = response.xpath('//td[@id="box_only_price"]/span[1]/text()').get()
+        item["grade_9_5"] = grade_9_5.strip()[1:] if grade_9_5 else None
+
+        grade_10 = response.xpath('//td[@id="manual_only_price"]/span[1]/text()').get()
+        item["grade_10"] = grade_10.strip()[1:] if grade_10 else None
+
         item["timestamp"] = datetime.utcnow()
 
         yield item

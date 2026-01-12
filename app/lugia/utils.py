@@ -27,11 +27,13 @@ def init_db():
             """
             create table if not exists card_price_history (
             card_id text,
+            scrape_id timeuuid,
+            grade text,
             date date,
             price float,
             source text,
-            primary key ((card_id), date)
-            ) with clustering order by (date desc);
+            primary key (card_id, grade, scrape_id)
+            ) with clustering order by (grade ASC, scrape_id DESC);
         """
         )
 
