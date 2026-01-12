@@ -62,6 +62,18 @@ services:
       timeout: 10s
       retries: 5
 
+  cassandra_init:
+    image: cassandra:5.0
+    depends_on:
+      cassandra:
+        condition: "service_healthy"
+    entrypoint: >
+      bash -c "
+      cqlsh cassandra -e 
+      \"create keyspace if not exists pokemon
+        with replication = {'class': 'SimpleStrategy', 'replication_factor': 1};\"
+      "
+  
   crawler:
     build: ./app/gengar
     container_name: scrapy_crawler
@@ -82,8 +94,12 @@ services:
     build: ./app/charmander
     container_name: api_backend
     depends_on:
-      - postgres
-      - elasticsearch
+      postgres:
+        condition: "service_healthy"
+      elasticsearch:
+        condition: "service_healthy"
+      cassandra:
+        condition: "service_healthy"
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200

@@ -1,5 +1,5 @@
 from cassandra.auth import PlainTextAuthProvider
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, NoHostAvailable
 
 CASSANDRA_HOSTS = ["cassandra"]
 KEYSPACE = "pokemon"
@@ -9,20 +9,25 @@ cluster = Cluster(CASSANDRA_HOSTS, port=9042)
 session = cluster.connect(KEYSPACE)
 
 
+def get_cassandra_session(retries=10, delay=3):
+    for i in range(retries):
+        try:
+            cluser = Cluster(["cassandra"])
+            return cluster.connect()
+        except NoHostAvailable:
+            if retries == i - 1:
+                raise
+            time.sleep(delay)
+
+
+def check_cassandra():
+    session = get_cassandra_session()
+    session.execute("SELECT now() FROM system.local")
+    return "ok"
+
+
 def init_db():
     try:
-        # Create keyspace
-        #       session.execute(
-        #       """
-        #           create keyspace if not exists pokemon
-        #           with replication = {
-        #               'class': 'SimpleStrategy',
-        #               'replication_factor': 3
-        #           }
-        #       """
-        #       )
-
-        # Create historical table
         session.execute(
             """
             create table if not exists card_price_history (
