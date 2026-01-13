@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, func
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
 from common.database.postgres import Base
@@ -25,10 +25,14 @@ class CardMetadata(Base):
     __tablename__ = "card_metadata"
 
     card_id = Column(Integer, primary_key=True, autoincrement=True)
+    card_name = Column(String, nullable=True)
     set_name = Column(String, nullable=True)
     pokemon_type = Column(String, nullable=True)
     rarity = Column(String, nullable=True)
     illustrator = Column(String, nullable=True)
     series = Column(String, nullable=True)
     numbers_in_set = Column(Integer, nullable=True)
+    reverse = Column(Boolean, nullable=True)
+    holo = Column(Boolean, nullable=True)
+    first_edition = Column(Boolean, nullable=True)
     release_date = Column(DateTime, nullable=True)
