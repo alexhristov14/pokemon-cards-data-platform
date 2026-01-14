@@ -4,15 +4,26 @@ set -e
 
 echo "[python_runner] starting..."
 
-until cqlsh "$CASSANDRA_HOST" -e "describe keyspaces" >/dev/null 2>&1; do 
-	echo "[python-runner] Cassandra not ready, retrying in 5s..."
-  	sleep 5
-done
-
 if [ "${RUN_STARTUP_SCRIPTS:-true}" = "true" ]; then
 	echo "[python_runner] running startup scripts"
-	# python3 cli/init_postgres.py
+	
+	echo "[python_runner] waiting for Postgres..."
+	until python3 -c "import psycopg2; psycopg2.connect('$DATABASE_URL').close()"; do
+		echo "[python_runner] Postgres not ready, retrying in 5s..."
+		sleep 5
+	done
+	
+	python3 cli/init_postgres.py
+	
+	echo "[python_runner] waiting for Cassandra..."
+	until python3 -c "from cassandra.cluster import Cluster; Cluster(['$CASSANDRA_HOST']).connect().shutdown()" 2>/dev/null; do 
+		echo "[python_runner] Cassandra not ready, retrying in 5s..."
+		sleep 5
+	done
+	
 	python3 cli/init_cassandra.py
+	
+	# todo: healthcheck elasticsearch
 	# python3 cli/init_elasticsearch.py
 
 else

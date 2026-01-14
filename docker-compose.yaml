@@ -121,8 +121,12 @@ services:
     build: ./src/runner
     container_name: python_runner
     depends_on:
-      - postgres
-      - elasticsearch
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      cassandra:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
