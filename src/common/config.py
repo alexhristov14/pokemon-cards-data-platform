@@ -1,10 +1,9 @@
-from pydantic_settings import BaseSettings
+import os
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-class Settings(BaseSettings):
-    postgres_url: str
-    elasticsearch_url: str
-    cassandra_hosts: list[str]
+CASSANDRA_HOSTS = os.getenv("CASSANDRA_HOST", "cassandra").split(",")
+CASSANDRA_PORT = int(os.getenv("CASSANDRA_PORT", 9042))
+KEYSPACE = os.getenv("CASSANDRA_KEYSPACE", "pokemon")
 
-    class Config:
-        env_file = ".env"
+ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL")

@@ -1,7 +1,6 @@
 from typing import Optional
 
 import requests as r
-from tcgdexsdk import TCGdex
 
 from common.database.postgres import get_db_session
 from common.models.postgres_models import CardMetadata

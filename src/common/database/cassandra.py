@@ -4,11 +4,7 @@ from cassandra import ConsistencyLevel
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cluster import Cluster, NoHostAvailable
 
-CASSANDRA_HOSTS = os.getenv("CASSANDRA_HOST", "cassandra").split(",")
-
-CASSANDRA_PORT = int(os.getenv("CASSANDRA_PORT", 9042))
-
-KEYSPACE = os.getenv("CASSANDRA_KEYSPACE", "pokemon")
+from common.config import CASSANDRA_HOSTS, CASSANDRA_PORT, KEYSPACE
 
 cluster = Cluster(CASSANDRA_HOSTS, port=CASSANDRA_PORT)
 session = cluster.connect(KEYSPACE)
