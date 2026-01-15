@@ -32,13 +32,13 @@ def bulk_insert(documents):
     print(f"Inserted {success} documents into index '{INDEX_NAME}'.")
 
 
-def bulk_upsert(documents):
+def bulk_upsert(documents, id_attr: str = "card_id"):
 
     actions = [
         {
             "_op_type": "update",
             "_index": INDEX_NAME,
-            "_id": doc["card_id"],
+            "_id": doc[id_attr],
             "doc": doc,
             "doc_as_upsert": True,
         }

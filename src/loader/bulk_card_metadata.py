@@ -6,5 +6,4 @@ from common.utils.converter import model_to_dict
 if __name__ == "__main__":
     with get_db_session() as session:
         for row in session.query(CardMetadata).yield_per(100):
-            print(model_to_dict(row))
-            exit()
+            bulk_upsert(model_to_dict(row), "id")
