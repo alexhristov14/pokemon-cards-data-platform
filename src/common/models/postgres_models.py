@@ -41,6 +41,12 @@ class CardMetadata(Base):
     first_edition = Column(Boolean, nullable=True)
     release_date = Column(DateTime, nullable=True)
 
+class CardTableLinker(Base):
+    __tablename__ = "card_table_linker"
+
+    id = Column(String, primary_key=True, nullable=False)
+    card_metadata_id = Column(ForeignKey("card_metadata.id"))
+    card_raw_id = Column(ForeignKey("raw_card_prices.id"))
 
 class CardStatistics(Base):
     __tablename__ = "card_statistics"
